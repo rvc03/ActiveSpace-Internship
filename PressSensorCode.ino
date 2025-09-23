@@ -50,16 +50,24 @@ void loop() {
     float tempC = (float)temp_raw / 200.0;        // [°C]
 
     // Ambient density correction
-    float AmbientDensity=1000; // [mbar]
-    float densityCorrection= dp*966/AmbientDensity;
+    float AmbientPressure=1016.5; // [mbar]
+    float dpCorrected= dp*966/AmbientPressure;
 
     // Print results
-    Serial.print("DP: ");
-    Serial.print(densityCorrection, 3);
-    Serial.print(" Pa  |  Temp: ");
-    Serial.print(tempC, 2);
-    Serial.print(" °C  |  ");
-    Serial.print("Vel: "); Serial.println(sqrt(2*densityCorrection/1.225), 2);   //Bernouli formula
+    // Serial.print("DP: ");
+    Serial.print(dpCorrected, 2); Serial.print("; ");
+    // Serial.print(" Pa  |  Temp: ");
+    // Serial.print(tempC, 2);
+    // Serial.print(" °C  |  ");
+
+
+    float AmbientPressurePa = AmbientPressure*100; // convert from mbar to Pa
+    float Temperature = 25;  //ºC
+    float Dens = 1.292*AmbientPressurePa*273.15/(101325*(273.15+Temperature));  // Calculate ambient density
+
+    // Print velocity
+    Serial.println(sqrt(2*dpCorrected/Dens), 2);   //Bernouli formula
+    
   }
 
   while (millis()-timer <100){}; // output every 100 ms
